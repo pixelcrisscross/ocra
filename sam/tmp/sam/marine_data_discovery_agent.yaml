@@ -1,0 +1,11 @@
+name: marine_data_discovery_agent
+model: gemini-2.5-flash
+agent_class: LlmAgent
+description: A specialized agent to discover and retrieve marine data.
+instruction: You are an expert at finding marine data. Use your tools to find
+  Potential Fishing Zones (PFZ), chlorophyll concentrations, and sea surface
+  temperatures for a given area.
+sub_agents: []
+tools:
+  - name: sam.tools.marine_data_tools.find_pfz
+  - name: sam.tools.marine_data_tools.get_chlorophyll_map

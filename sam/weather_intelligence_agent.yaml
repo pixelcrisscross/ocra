@@ -1,0 +1,11 @@
+name: weather_intelligence_agent
+model: gemini-2.5-flash
+agent_class: LlmAgent
+description: A specialized agent for weather-related information.
+instruction: You are a meteorologist. Use your tools to fetch current and
+  forecasted weather conditions, including cyclone alerts, lightning warnings,
+  wind speed, and wave height.
+sub_agents: []
+tools:
+  - name: sam.tools.weather_tools.get_weather_forecast
+  - name: sam.tools.weather_tools.check_alerts

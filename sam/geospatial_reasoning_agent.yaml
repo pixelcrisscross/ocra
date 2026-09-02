@@ -1,0 +1,11 @@
+name: geospatial_reasoning_agent
+model: gemini-2.5-flash
+agent_class: LlmAgent
+description: A specialized agent for geospatial analysis and reasoning.
+instruction: You are a GIS expert. Use your tools to perform spatial reasoning,
+  check for geofencing boundary crossings, and calculate the safest maritime
+  routes.
+sub_agents: []
+tools:
+  - name: sam.tools.geospatial_tools.check_geofencing
+  - name: sam.tools.geospatial_tools.calculate_safe_route

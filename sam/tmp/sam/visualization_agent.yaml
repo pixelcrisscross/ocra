@@ -1,0 +1,9 @@
+name: visualization_agent
+model: gemini-2.5-flash
+agent_class: LlmAgent
+description: A specialized agent to generate maps and visualizations.
+instruction: You are a data visualization expert. Use your tools to create maps
+  and charts that clearly present the findings to the user.
+sub_agents: []
+tools:
+  - name: sam.tools.visualization_tools.generate_map_visualization

@@ -1,0 +1,11 @@
+name: planning_agent
+agent_class: SequentialAgent
+description: Orchestrates a sequence of specialized agents to gather and analyze
+  marine data to fulfill a complex user request.
+sub_agents:
+  - config_path: ./marine_data_discovery_agent.yaml
+  - config_path: ./weather_intelligence_agent.yaml
+  - config_path: ./ocean_analytics_agent.yaml
+  - config_path: ./geospatial_reasoning_agent.yaml
+  - config_path: ./risk_assessment_agent.yaml
+  - config_path: ./visualization_agent.yaml

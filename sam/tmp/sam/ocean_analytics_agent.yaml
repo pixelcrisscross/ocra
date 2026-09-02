@@ -1,0 +1,9 @@
+name: ocean_analytics_agent
+model: gemini-2.5-flash
+agent_class: LlmAgent
+description: A specialized agent for oceanographic data analysis.
+instruction: You are an oceanographer. Use your tools to analyze ocean data like
+  tides and sea currents for a specified location and time.
+sub_agents: []
+tools:
+  - name: sam.tools.geospatial_tools.get_tide_conditions
