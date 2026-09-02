@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ORCA — Marine Intelligence</title>
+  <meta name="description" content="ORCA Agentic Marine Intelligence Platform" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark"><span>O</span></div>
+        <div>
+          <div class="brand-name">ORCA</div>
+          <div class="brand-sub">Marine Intelligence</div>
+        </div>
+      </div>
+      <div class="top-actions">
+        <div class="api-status" id="apiStatus"><i></i><span>Backend connecting…</span></div>
+        <button class="icon-btn" id="themeBtn" title="Toggle appearance">◐</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="sidebar">
+        <section class="hero-card">
+          <div class="eyebrow">AGENTIC OCEAN OS</div>
+          <h1>Ask the ocean<br><em>anything.</em></h1>
+          <p>Conversational marine intelligence backed by live ocean, weather, hazard and geospatial data.</p>
+          <div class="hero-orbit"><span></span><span></span><span></span></div>
+        </section>
+
+        <section class="quick-section">
+          <div class="section-label">TRY A SCENARIO</div>
+          <button class="prompt-chip" data-query="What are the current sea conditions near Visakhapatnam?">Current sea conditions <span>↗</span></button>
+          <button class="prompt-chip" data-query="Is it safe to venture into the sea tomorrow morning near Visakhapatnam?">Safety tomorrow morning <span>↗</span></button>
+          <button class="prompt-chip" data-query="Where is the nearest Potential Fishing Zone today near Visakhapatnam?">Nearest PFZ today <span>↗</span></button>
+          <button class="prompt-chip" data-query="Are there any lightning or cyclone alerts near Visakhapatnam?">Hazards & alerts <span>↗</span></button>
+        </section>
+
+        <section class="session-card">
+          <div class="section-label">SESSION</div>
+          <div class="session-row"><span>Conversation</span><code id="conversationId">local</code></div>
+          <div class="session-row"><span>Language</span><strong id="languageLabel">Auto</strong></div>
+          <button class="secondary-btn" id="newSessionBtn">＋ New conversation</button>
+        </section>
+      </aside>
+
+      <section class="content">
+        <div class="workspace-head">
+          <div>
+            <div class="kicker">LIVE MISSION CONTROL</div>
+            <h2 id="locationTitle">No location selected</h2>
+            <div class="muted" id="locationMeta">Ask a question to initialize your marine workspace.</div>
+          </div>
+          <div class="workspace-actions">
+            <button class="secondary-btn" id="locateBtn">◎ Use my location</button>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <section class="panel chat-panel">
+            <div class="panel-head">
+              <div>
+                <div class="panel-title">ORCA Copilot</div>
+                <div class="panel-sub">Multi-agent marine decision support</div>
+              </div>
+              <div class="tiny-live"><i></i> LIVE</div>
+            </div>
+            <div class="chat-stream" id="chatStream">
+              <div class="empty-chat">
+                <div class="wave-icon">≈</div>
+                <h3>What do you need to know?</h3>
+                <p>Ask about sea conditions, PFZs, safety, hazards, routes or marine productivity.</p>
+              </div>
+            </div>
+            <form class="composer" id="chatForm">
+              <textarea id="messageInput" rows="1" placeholder="Ask ORCA about any marine location…"></textarea>
+              <button class="send-btn" type="submit" aria-label="Send">↑</button>
+            </form>
+            <div class="composer-foot"><span>Enter to send</span><span id="latencyLabel">Ready</span></div>
+          </section>
+
+          <section class="panel map-panel">
+            <div class="panel-head map-head">
+              <div>
+                <div class="panel-title">Operational Map</div>
+                <div class="panel-sub">Ocean, PFZ, hazard & boundary context</div>
+              </div>
+              <div class="map-legend"><span><i class="dot ocean"></i> Location</span><span><i class="dot pfz"></i> PFZ</span><span><i class="dot hazard"></i> Hazard</span></div>
+            </div>
+            <div id="map"></div>
+            <div class="map-overlay" id="mapOverlay">Waiting for a marine location…</div>
+          </section>
+
+          <section class="panel metrics-panel">
+            <div class="panel-head">
+              <div>
+                <div class="panel-title">Current Conditions</div>
+                <div class="panel-sub">Latest values carried through the agent chain</div>
+              </div>
+              <span class="status-pill unknown" id="overallStatus">NO DATA</span>
+            </div>
+            <div class="metric-grid" id="metricGrid">
+              <div class="metric empty"><span>Sea surface temperature</span><strong>—</strong><small>Awaiting data</small></div>
+              <div class="metric empty"><span>Wave height</span><strong>—</strong><small>Awaiting data</small></div>
+              <div class="metric empty"><span>Wave period</span><strong>—</strong><small>Awaiting data</small></div>
+              <div class="metric empty"><span>Current speed</span><strong>—</strong><small>Awaiting data</small></div>
+              <div class="metric empty"><span>Wind speed</span><strong>—</strong><small>Awaiting data</small></div>
+              <div class="metric empty"><span>Sea level</span><strong>—</strong><small>Awaiting data</small></div>
+            </div>
+          </section>
+
+          <section class="panel intelligence-panel">
+            <div class="panel-head"><div><div class="panel-title">Mission Intelligence</div><div class="panel-sub">Explainability, safety and coverage</div></div></div>
+            <div class="intelligence-stack">
+              <div class="intel-card primary">
+                <div class="intel-top"><span>Safety assessment</span><b id="safetyState">Waiting</b></div>
+                <div class="intel-copy" id="safetyCopy">The safety engine will combine wave, wind, current and hazard evidence.</div>
+              </div>
+              <div class="coverage-row">
+                <div><span>Data completeness</span><strong id="coverageValue">0%</strong></div>
+                <div class="progress"><i id="coverageBar"></i></div>
+              </div>
+              <div class="mini-grid">
+                <div><span>PFZ</span><strong id="pfzValue">—</strong></div>
+                <div><span>Hazards</span><strong id="hazardValue">—</strong></div>
+                <div><span>Geofences</span><strong id="geoValue">—</strong></div>
+                <div><span>Confidence</span><strong id="confidenceValue">—</strong></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel sources-panel">
+            <div class="panel-head"><div><div class="panel-title">Evidence & Sources</div><div class="panel-sub">Every claim should be traceable</div></div><span class="source-count" id="sourceCount">0</span></div>
+            <div class="source-list" id="sourceList"><div class="source-empty">Source links will appear here after a response.</div></div>
+          </section>
+
+          <section class="panel agent-panel">
+            <div class="panel-head"><div><div class="panel-title">Agent Trace</div><div class="panel-sub">How ORCA solved the request</div></div></div>
+            <div class="agent-trace" id="agentTrace">
+              <div class="trace-step done"><span>01</span><div><b>Conversation AI</b><small>Intent & language</small></div></div>
+              <div class="trace-line"></div>
+              <div class="trace-step"><span>02</span><div><b>Planner</b><small>Task decomposition</small></div></div>
+              <div class="trace-line"></div>
+              <div class="trace-step"><span>03</span><div><b>Data agents</b><small>Marine · weather · hazards</small></div></div>
+              <div class="trace-line"></div>
+              <div class="trace-step"><span>04</span><div><b>Fusion engine</b><small>Evidence + confidence</small></div></div>
+              <div class="trace-line"></div>
+              <div class="trace-step"><span>05</span><div><b>Ocean intelligence</b><small>Same-language synthesis</small></div></div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="app.js"></script>
+</body>
+</html>
