@@ -1,4 +1,7 @@
-﻿{
-  "message": "What are the current sea conditions near Visakhapatnam? Check waves, SST, currents, wind, weather hazards, PFZ, and any geofence restrictions.",
-  "conversation_id": "test-001"
+{
+  "message": "What are the current sea conditions near Visakhapatnam? Check waves, SST, currents, wind, weather hazards, PFZ, and geofence restrictions.",
+  "conversation_id": "test-001",
+  "location": {
+    "name": "Visakhapatnam"
+  }
 }

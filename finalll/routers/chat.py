@@ -1,12 +1,12 @@
 import uuid
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Request, WebSocket, WebSocketDisconnect
 from schemas import ChatRequest, Location
 
 router = APIRouter(prefix="/api/chat", tags=["chat"])
 
 
 @router.post("")
-def chat(req: ChatRequest, request):
+def chat(req: ChatRequest, request: Request):
     conversation_id = req.conversation_id or f"conv_{uuid.uuid4().hex[:10]}"
     result = request.app.state.orca.run(req.message, conversation_id, req.location)
     return result.model_dump()
