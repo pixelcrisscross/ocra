@@ -6,3 +6,4 @@ beautifulsoup4
 trafilatura
 duckduckgo-search
 lxml_html_clean
+uvicorn
