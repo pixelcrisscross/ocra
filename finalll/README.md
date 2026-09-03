@@ -96,6 +96,25 @@ The official INCOIS PFZ WebGIS exposes current geo-referenced PFZ information at
 
 INCOIS ERDDAP is used directly for satellite/oceanographic enrichment where the public dataset exposes a point query. MOSDAC is documented as an additional ISRO satellite source; some downloads require an authenticated MOSDAC account, so credentials should be added only when you have authorized access.
 
+## Deployment
+
+This backend is a long-running Python/FastAPI service with a SQLite session store and a chain
+of synchronous upstream calls (Open-Meteo, Nominatim, NOAA NDBC, INCOIS ERDDAP, IMD) plus two
+Gemini calls. It is not a good fit for Vercel's ephemeral serverless functions (read-only
+filesystem, ~10s request timeout on the free tier).
+
+**Recommended topology**
+
+1. **Backend** — run it on a persistent Python host (Render, Railway, Fly.io, or a VPS):
+   - Add a `data/` directory (the repo already ships `data/geofences.geojson`).
+   - Set `GEMINI_API_KEY`, `GEMINI_MODEL_L1`, `GEMINI_MODEL_L5` as environment variables.
+   - Add your frontend origin to `ORCA_CORS_ORIGINS` (comma-separated).
+   - Start with `uvicorn main:app --host 0.0.0.0 --port 8000`.
+   - Because the session DB is a file, ensure it is writable; on some hosts use a disk-addon.
+2. **Frontend** — deploy the `frontend/` directory to Vercel:
+   - Set `VITE_API_BASE_URL` to the hosted backend URL in Vercel environment variables.
+   - Vercel auto-detects the Vite build (`npm run build` → `dist/`); `vercel.json` is included.
+
 ## Important safety limitation
 
 This is a decision-support platform, not a navigation system. Official maritime warnings, nautical charts, port advisories and vessel-specific procedures remain authoritative.
