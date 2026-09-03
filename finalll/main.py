@@ -1,6 +1,10 @@
+import logging
+
+import requests
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from config import CORS_ORIGINS
 from session_store import SessionStore, init_db
 from agents.orchestrator import Orchestrator
@@ -32,6 +36,22 @@ app.add_middleware(
 
 app.include_router(chat_router)
 app.include_router(data_router)
+
+
+@app.exception_handler(requests.RequestException)
+async def upstream_error_handler(request: Request, exc: requests.RequestException):
+    return JSONResponse(status_code=502, content={"detail": f"Upstream data provider unavailable: {exc}"})
+
+
+@app.exception_handler(ValueError)
+async def value_error_handler(request: Request, exc: ValueError):
+    return JSONResponse(status_code=422, content={"detail": str(exc)})
+
+
+@app.exception_handler(Exception)
+async def unhandled_error_handler(request: Request, exc: Exception):
+    logging.getLogger("orca").exception("Unhandled error", exc_info=exc)
+    return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
 
 @app.get("/")

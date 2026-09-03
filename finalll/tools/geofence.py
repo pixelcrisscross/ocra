@@ -16,15 +16,22 @@ def check_geofences(lat, lon):
     path = Path(ORCA_GEOFENCE_FILE)
     if not path.exists():
         return [], {"status": "no_geofence_dataset_configured"}
-    payload = json.loads(path.read_text(encoding="utf-8"))
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        features = payload.get("features", [])
+    except Exception as exc:
+        return [], {"status": "geofence_dataset_invalid", "error": str(exc)}
     p = Point(lon, lat)
     hits = []
-    for feature in payload.get("features", []):
-        geom = shape(feature["geometry"])
-        props = feature.get("properties", {})
-        inside = geom.contains(p) or geom.touches(p)
-        # Approximate distance using a local degree-to-km conversion around point.
-        distance_km = 0.0 if inside else geom.distance(p) * 111.0
+    for feature in features:
+        try:
+            geom = shape(feature["geometry"])
+            props = feature.get("properties", {})
+            inside = geom.contains(p) or geom.touches(p)
+            # Approximate distance using a local degree-to-km conversion around point.
+            distance_km = 0.0 if inside else geom.distance(p) * 111.0
+        except (KeyError, TypeError, ValueError):
+            continue
         hits.append({
             "name": props.get("name", "Unnamed zone"),
             "zone_type": props.get("type", "restricted"),
